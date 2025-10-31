@@ -57,7 +57,8 @@ npm run server:seed
 ```
 ## Environment variables
 
-### .env.example did
+### .env.example 
+cp .env.example .env
 
 
 A Monorepo project for completing tasks project assignment. This is monorepo bootstraped in nx workspaces with Nest.js, Vue.js. 
