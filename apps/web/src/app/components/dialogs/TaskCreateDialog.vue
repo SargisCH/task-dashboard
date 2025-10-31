@@ -158,7 +158,6 @@ const saveAction = usePromiseState<void, ResponseError>(async (ok: () => void) =
 });
 
 const saveError = computed<string>(() => {
-    console.log('error', saveAction.state, saveAction);
     if (saveAction.error) {
         const message =
             (saveAction.error.response.data as ErrorResponse)?.message ??

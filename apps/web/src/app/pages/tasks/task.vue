@@ -7,7 +7,6 @@
                 <AppCard
                     title="Task details"
                     @submit="saveAction.execute(500)"
-                    :validation-schema="taskCreateSchema"
                     :initial-values="form"
                     is-form
                 >
@@ -92,15 +91,15 @@
 <script setup lang="ts">
 import { api, usePromiseState, ResponseError } from '@/common';
 import {
+    ErrorResponse,
     PaginationResponse,
     Status,
     TaskCreateDto,
     TaskResponse,
     UserProfileResponse,
     statusOptions,
-    taskCreateSchema,
 } from '@workspace/shared';
-import { useQuasar } from 'quasar';
+import { useQuasar, date } from 'quasar';
 const $q = useQuasar();
 const route = useRoute();
 
@@ -113,22 +112,26 @@ const form = reactive<TaskCreateDto>({
     endDate: null,
 });
 
-const taskDateRange = reactive({
+const taskDateRange = ref({
     from: null,
     to: null,
 });
 
-let userOptions: { label: string; value: number }[] = [];
+const userOptions = ref([]);
 
 function loadForm(data: TaskResponse) {
     form.title = data.title;
     form.description = data.description;
     form.status = data.status;
     form.assigneeId = data.assigneeId;
+    if (data.startDate && data.endDate) {
+        taskDateRange.value.from = date.formatDate(data.startDate, 'YYYY/MM/DD');
+        taskDateRange.value.to = date.formatDate(data.endDate, 'YYYY/MM/DD');
+    }
 }
 
 function loadUserOptions(users: UserProfileResponse[]) {
-    userOptions = users.map((user) => ({
+    userOptions.value = users.map((user) => ({
         label: `${user.firstName} ${user.lastName} `,
         value: user.id,
     }));
@@ -137,8 +140,6 @@ function loadUserOptions(users: UserProfileResponse[]) {
 const taskAction = usePromiseState<TaskResponse, ResponseError>(async () => {
     const { data } = await api.tasks.getOne(Number(route.params.id));
     loadForm(data);
-    taskDateRange.from = data.startDate;
-    taskDateRange.to = data.endDate;
     return data;
 });
 
@@ -157,8 +158,8 @@ usersAction.execute(500);
 const saveAction = usePromiseState<void, ResponseError>(async () => {
     const { data } = await api.tasks.updateOne(taskAction.state.id, {
         ...form,
-        startDate: taskDateRange.from,
-        endDate: taskDateRange.to,
+        startDate: new Date(taskDateRange.value.from),
+        endDate: new Date(taskDateRange.value.to),
     });
     loadForm(data);
 
@@ -171,7 +172,12 @@ const saveAction = usePromiseState<void, ResponseError>(async () => {
 });
 
 const saveError = computed<string>(() => {
-    if (saveAction.error) return 'Error updating task';
+    if (saveAction.error)
+        return (
+            (saveAction.error.response.data as ErrorResponse)?.message ??
+            saveAction.error.message ??
+            'Error updating task'
+        );
 
     return undefined;
 });
