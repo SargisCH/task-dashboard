@@ -1,9 +1,8 @@
 {
-    "name": "nx-nestjs-vue",
+    "name": "task-monorepo",
     "version": "0.0.0",
     "license": "MIT",
     "private": true,
-    "main": "dist/apps/web/electron/main/index.js",
     "scripts": {
         "apps:dev": "nx run-many --target=serve --projects=web,server",
         "web:dev": "nx serve web",
@@ -13,8 +12,6 @@
         "test": "nx run-many --target=test --verbose",
         "clean": "rimraf dist",
         "lint": "nx run-many --target=lint",
-        "docker": "npm run build && docker-compose up --force-recreate --build -d && docker image prune -f",
-        "dep-graph": "node tools/scripts/patch-graph.js && nx graph"
     },
     "devDependencies": {
         "@nestjs/schematics": "^9.2.0",
