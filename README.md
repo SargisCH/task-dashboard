@@ -18,17 +18,20 @@ Monorepo project with NX Workspaces, Vue 3, NestJS and TypeScript.
 # 1. Install the project and build packages in libs folder
 npm install
 
-# 2. Dev: Run frontend with hot reload 
-npm run web:dev
-
-# 3. Dev: Run backend with hot reload 
+# 2. Dev: Run backend with hot reload 
+# You need mysql server running on the same port as specified in the .env file,
+# if not run the project with docker which will run mysql instance in the container 
 # Note that you need to create the .env file in the project root directory beforehand
 # You can copy the .env.example file and rename it to .env
+# cp .env.example .env
 # Then you can configure database access and other server settings
-npm run server:dev
+npm run server:dev (skip if you are running with docker)
+
+# 3. Dev: Run frontend with hot reload 
+npm run web:dev
 
 # 4. Or run backend and frontend with hot reload parallel
-npm run apps:dev
+npm run apps:dev (mysql local connection is required)
 
 # 5. Seed the users into database
 npm run server:seed
@@ -49,10 +52,15 @@ npm install
 npm run build
 
 # 3. run docker containers for mysql instance and server app
+cp .env.example .env
 docker compose up -d 
 
 # 4. Seed the users into database
 npm run server:seed
+
+
+# 5. Dev: Run frontend with hot reload 
+npm run web:dev
 
 ```
 ## Environment variables

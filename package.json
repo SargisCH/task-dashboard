@@ -11,7 +11,7 @@
         "build": "npm run clean && nx run-many --target=lint,test,build --configuration=production --projects=web,server",
         "test": "nx run-many --target=test --verbose",
         "clean": "rimraf dist",
-        "lint": "nx run-many --target=lint",
+        "lint": "nx run-many --target=lint"
     },
     "devDependencies": {
         "@nestjs/schematics": "^9.2.0",
